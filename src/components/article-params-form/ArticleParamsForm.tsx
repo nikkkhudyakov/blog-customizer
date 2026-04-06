@@ -13,6 +13,7 @@ import { Button } from 'src/ui/button';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Select } from 'src/ui/select';
 import { Separator } from 'src/ui/separator';
+import { Text } from 'src/ui/text';
 
 import styles from './ArticleParamsForm.module.scss';
 
@@ -29,7 +30,7 @@ export const ArticleParamsForm = ({
 	onReset,
 	defaultState,
 }: ArticleParamsFormProps) => {
-	const [isOpen, setIsOpen] = useState(false);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [draftState, setDraftState] = useState(articleState);
 	const asideRef = useRef<HTMLElement>(null);
 
@@ -38,7 +39,7 @@ export const ArticleParamsForm = ({
 	}, [articleState]);
 
 	useEffect(() => {
-		if (!isOpen) {
+		if (!isMenuOpen) {
 			return;
 		}
 
@@ -46,7 +47,7 @@ export const ArticleParamsForm = ({
 			const target = event.target;
 
 			if (target instanceof Node && !asideRef.current?.contains(target)) {
-				setIsOpen(false);
+				setIsMenuOpen(false);
 			}
 		};
 
@@ -55,7 +56,7 @@ export const ArticleParamsForm = ({
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [isOpen]);
+	}, [isMenuOpen]);
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -69,14 +70,22 @@ export const ArticleParamsForm = ({
 
 	return (
 		<>
-			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen((open) => !open)} />
+			<ArrowButton
+				isOpen={isMenuOpen}
+				onClick={() => setIsMenuOpen((open) => !open)}
+			/>
 			<aside
 				ref={asideRef}
-				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
+				className={clsx(styles.container, {
+					[styles.container_open]: isMenuOpen,
+				})}>
 				<form
 					className={styles.form}
 					onSubmit={handleSubmit}
 					onReset={handleReset}>
+					<Text as='h2' size={31} weight={800} uppercase>
+						Задайте параметры
+					</Text>
 					<Select
 						title='Шрифт'
 						selected={draftState.fontFamilyOption}
